@@ -1,0 +1,25 @@
+```mermaid
+graph TD
+    subgraph 01["01. Reproducible Training"]
+        A[Raw Data] --> B[DVC Versioning]
+        B --> C[MLflow Tracking]
+    end
+
+    subgraph 02["02. Feature Store"]
+        D[Feast Configs] --> E[Offline Store / Training]
+        E --> F[Online Store / Low-Latency]
+    end
+
+    subgraph 03["03. Agentic RAG"]
+        G[LangChain / FAISS] --> H[Pydantic Validation]
+        H --> I[Gradio Interface]
+    end
+
+    subgraph 04["04. Cloud Infrastructure"]
+        J[Terraform IaC] --> K[Vault Secrets]
+        K --> L[Docker Compose Runtime]
+    end
+
+    C --> D
+    F --> G
+    I --> J
