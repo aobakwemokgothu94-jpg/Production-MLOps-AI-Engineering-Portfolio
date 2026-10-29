@@ -1,0 +1,69 @@
+Project Focus: Real-Time Feature Store (02-realtime-feature-store)
+This pipeline solves training-serving skew by storing features in an offline store (for historical model training) and materializing them to an online store (for sub-millisecond real-time scoring).
+
+Step 1: Feature Definition (feature_store/features.py)
+Create your entity and feature views using Feast's configuration framework:
+
+Python
+from datetime import timedelta
+from feast import Entity, Field, FeatureView, FileSource, ValueType
+from feast.types import Float32, Int64
+
+# Define an entity for your data items (e.g., location, device, or user ID)
+location_entity = Entity(
+    name="location_id",
+    value_type=ValueType.INT64,
+    description="Unique identifier for the monitored location or field",
+)
+
+# Define offline data source (e.g., historical soil or weather measurements)
+soil_offline_source = FileSource(
+    name="soil_stats_source",
+    path="data/soil_features.parquet",
+    timestamp_field="event_timestamp",
+    created_timestamp_column="created_timestamp",
+)
+
+# Define the Feature View
+soil_feature_view = FeatureView(
+    name="soil_feature_view",
+    entities=[location_entity],
+    ttl=timedelta(days=365),
+    schema=[
+        Field(name="N", dtype=Float32),
+        Field(name="P", dtype=Float32),
+        Field(name="K", dtype=Float32),
+        Field(name="ph", dtype=Float32),
+    ],
+    online=True,
+    source=soil_offline_source,
+)
+Step 2: Feast Registry & Configuration (feature_store/feature_store.yaml)
+Configure your Feast repository settings:
+
+YAML
+project: production_mlops_portfolio
+registry: data/registry.pb
+provider: local
+offline_store:
+  type: file
+online_store:
+  type: sqlite
+  path: data/online_store.db
+Step 3: Materialization Script (feature_store/materialize.py)
+Write an automated script to materialize offline features into the low-latency online database for real-time model scoring:
+
+Python
+from datetime import datetime, timezone
+from feast import FeatureStore
+
+# Initialize feature store pointing to your config directory
+store = FeatureStore(repo_path=".")
+
+# Materialize historical features up to the current timestamp into the online store
+print("Starting feature materialization to online store...")
+store.materialize(
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    end_date=datetime.now(timezone.utc)
+)
+print("Feature materialization complete
