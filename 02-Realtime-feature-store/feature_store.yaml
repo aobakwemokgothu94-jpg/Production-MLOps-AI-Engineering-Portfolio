@@ -1,0 +1,8 @@
+project: user_feature_repo
+registry: data/registry.pb
+provider: local
+offline_store:
+  type: file
+online_store:
+  type: sqlite
+  path: data/online_store.db
