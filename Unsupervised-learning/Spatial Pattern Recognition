@@ -1,0 +1,66 @@
+# Unsupervised Clustering & Spatial Pattern Recognition
+
+## 📖 Overview
+This project focuses on unsupervised exploratory data analysis using **K-Means Clustering** via `scikit-learn`. The objective is to partition unlabeled 2D spatial data into distinct operational clusters, fit centroids, and generalize predictions to unseen data (`new_points`), followed by visual validation using `matplotlib`.
+
+This serves as the **algorithmic / scientific core** of an end-to-end data pipeline, demonstrating proficiency in unsupervised pattern discovery prior to serving models in production.
+
+---
+
+## 🛠️ Tech Stack & Dependencies
+* **Language:** Python 3.11+
+* **Core Libraries:** 
+  * `scikit-learn` (`KMeans`, model fitting, centroid extraction)
+  * `matplotlib` (Scatter plots, cluster color-coding, centroid marker rendering)
+  * `numpy` (Array slicing and coordinate extraction)
+
+---
+
+## 🚀 Implementation Workflow
+
+### 1. Model Training & Prediction (`cluster.py`)
+Initializes the K-Means algorithm, fits it to historical data points, and predicts cluster labels for incoming observations:
+
+```python
+from sklearn.cluster.cluster import KMeans
+
+# Initialize KMeans with 3 clusters
+model = KMeans(n_clusters=3, random_state=42)
+model.fit(points)
+
+# Predict cluster labels for new observations
+labels = model.predict(new_points)
+2. Cluster Inspection & Visualization (evaluate.py)
+Extracts model centroids using .cluster_centers_ and generates a dual-layer scatter plot mapping data points against learned cluster centers:
+
+Python
+import matplotlib.pyplot as plt
+
+# Extract coordinate slices
+xs = new_points[:, 0]
+ys = new_points[:, 1]
+centroids = model.cluster_centers_
+
+# Plot points color-coded by predicted labels
+plt.scatter(xs, ys, c=labels, alpha=0.5, label='Predicted Points')
+
+# Plot model centroids as diamonds
+plt.scatter(centroids[:, 0], centroids[:, 1], marker='D', s=50, color='black', label='Centroids')
+
+plt.title('K-Means Clustering & Centroid Inspection')
+plt.legend()
+plt.show()
+⚙️ Execution Instructions
+Install requirements:
+
+Bash
+pip install scikit-learn matplotlib numpy
+Run the clustering script:
+
+Bash
+python src/cluster.py
+Inspect cluster visualization:
+
+Bash
+python src/evaluate.py
+Maintained as part of ongoing data science and MLOps capability building.
