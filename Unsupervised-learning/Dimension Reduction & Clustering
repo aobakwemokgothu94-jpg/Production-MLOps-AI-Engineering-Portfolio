@@ -1,0 +1,68 @@
+Unsupervised Learning in Python: Dimension Reduction & Clustering
+This repository/log contains code exercises and solutions covering core unsupervised learning techniques using Python and scikit-learn, focusing on correlation, PCA, TF-IDF, TruncatedSVD, KMeans clustering, and Pipelines.
+
+🚀 Key Topics Covered
+1. Decorrelating Data and Dimension Reduction
+Pearson Correlation: Measuring linear correlation between features (e.g., width and length of grains).
+
+Principal Component Analysis (PCA):
+
+De-correlating features and projecting data onto orthogonal axes.
+
+Visualizing principal component directions (using model.components_ and plt.arrow).
+
+Determining the intrinsic dimension by plotting explained variance (pca.explained_variance_).
+
+Dimensionality reduction by specifying n_components.
+
+2. Discovering Interpretable Features & Text Mining
+TF-IDF Vectorization: Converting collections of raw text documents into a word-frequency array using TfidfVectorizer.
+
+TruncatedSVD: Performing Singular Value Decomposition to apply dimension reduction efficiently on sparse matrices (csr_matrix format).
+
+Non-Negative Matrix Factorization (NMF) (Intro): Alternative dimension reduction technique yielding interpretable parts/components.
+
+3. Combining Pipelines and Clustering
+Scikit-Learn Pipelines: Chaining preprocessing steps (like StandardScaler or TruncatedSVD) with models (like KMeans) into a single reusable object (make_pipeline).
+
+Unsupervised Clustering: Grouping unlabeled text/Wikipedia articles or datasets into distinct clusters and evaluating results using pandas DataFrames.
+
+💻 Code Examples Reference
+PCA Feature Reduction & Variance Plotting
+Python
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+import matplotlib.pyplot as plt
+
+# Create scaler and PCA pipeline
+scaler = StandardScaler()
+pca = PCA()
+pipeline = make_pipeline(scaler, pca)
+
+# Fit pipeline and plot explained variance
+pipeline.fit(samples)
+features = range(pca.n_components_)
+plt.bar(features, pca.explained_variance_)
+plt.xlabel('PCA feature')
+plt.ylabel('Variance')
+plt.show()
+TruncatedSVD + KMeans Pipeline for Text Clustering
+Python
+from sklearn.decomposition import TruncatedSVD
+from sklearn.cluster import KMeans
+from sklearn.pipeline import make_pipeline
+import pandas as pd
+
+# Create pipeline chaining SVD and KMeans
+svd = TruncatedSVD(n_components=50)
+kmeans = KMeans(n_clusters=6)
+pipeline = make_pipeline(svd, kmeans)
+
+# Fit and predict cluster labels on articles
+pipeline.fit(articles)
+labels = pipeline.predict(articles)
+
+# Align with article titles
+df = pd.DataFrame({'label': labels, 'article': titles})
+print(df.sort_values('label'))
