@@ -1,0 +1,47 @@
+# Unsupervised Learning in Python - Exploratory Data Analysis & Dimension Reduction
+
+This repository contains code implementations, exercises, and visualizations from the [DataCamp Unsupervised Learning in Python](https://app.datacamp.com/campus/courses/unsupervised-learning-in-python/) course. The projects focus on uncovering hidden patterns, grouping unlabelled data, and simplifying high-dimensional datasets.
+
+---
+
+## 📂 Project Structure & Key Techniques
+
+### 1. Hierarchical Clustering & Dendrograms
+* **Agglomerative Clustering**: Grouping data points iteratively based on distance metrics.
+* **Linkage Methods**:
+  * **Complete Linkage**: Measures the distance between the *farthest* points of two clusters.
+  * **Single Linkage**: Measures the distance between the *closest* points of two clusters.
+* **Extracting Clusters**: Using `fcluster` with specific distance cutoffs (`criterion='distance'`) to evaluate cluster membership against ground truth (e.g., via cross-tabulation with Pandas).
+
+### 2. Manifold Learning & Visualization (t-SNE)
+* **t-Distributed Stochastic Neighbor Embedding (t-SNE)**: 
+  * Maps multi-dimensional data into a 2D or 3D space while preserving local neighbor structures.
+  * Applied to both the **Grain Dataset** (colored by varieties) and the **Stock Market Dataset** (mapping stock price movements and mapping company ticker relationships).
+  * Tuned using custom learning rates (`learning_rate`) and scatter plot transparency (`alpha`).
+
+### 3. Decorrelation & Dimension Reduction (PCA)
+* **Principal Component Analysis (PCA)**:
+  * Shifts samples to have a mean of zero and rotates them to align with coordinate axes (decorrelating features).
+  * Follows scikit-learn's standard `fit()` and `transform()` workflow.
+  * Identifies principal components (directions of maximal variance).
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have Python installed along with the required machine learning and data science libraries:
+
+```bash
+pip install numpy pandas matplotlib scikit-learn scipy
+Running the Scripts
+You can run any individual script using Python or via an interactive Jupyter/IPython notebook session:
+
+Bash
+python script.py
+💡 Key Learnings & Takeaways
+Clustering choice matters: Different linkage methods (like single vs. complete) drastically change the shape and hierarchy of dendrograms.
+
+Visualization aids interpretation: t-SNE acts as a "map" for high-dimensional financial or biological data, revealing underlying clusters that standard linear methods might miss.
+
+Efficiency through PCA: PCA eliminates multicollinearity (correlation between features) without losing underlying sample information, setting the stage for more accurate supervised learning models.
