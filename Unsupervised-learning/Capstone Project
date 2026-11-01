@@ -1,0 +1,109 @@
+Capstone Project: Unsupervised Machine Learning Toolkit
+Course: Unsupervised Learning in Python (DataCamp)
+
+Author / Practitioner: Personal Portfolio Workspace
+
+📌 Project Overview
+This capstone portfolio encapsulates core unsupervised machine learning techniques implemented using Python, scikit-learn, SciPy, pandas, and Matplotlib. Unsupervised learning enables us to discover hidden structures, intrinsic dimensions, natural clusters, and interpretable parts or latent features from unlabeled datasets without pre-defined target variables.   
+DataCamp
+
+🗂️ Table of Contents
+Module 1: Clustering for Dataset Exploration
+
+Module 2: Visualization with Hierarchical Clustering and t-SNE
+
+Module 3: Decorrelating Your Data and Dimension Reduction (PCA)
+
+Module 4: Discovering Interpretable Features & Recommender Systems (NMF)
+
+Summary Code Architecture & Pipeline Design
+
+🔍 Module 1: Clustering for Dataset Exploration
+The goal of this module was to group unlabeled observations into cohesive groups based on feature similarities.   
+DataCamp
+
+K-Means Clustering: Partitioned observations into 
+𝐾
+K distinct clusters by minimizing within-cluster variance (inertia).
+
+Evaluation Metrics:
+
+Inertia Plot / Elbow Method: Identifying the optimal number of clusters (
+𝐾
+K) where adding extra clusters yields diminishing returns.
+
+Cross-Tabulation (pd.crosstab): Validating cluster alignments against known categorical classes (e.g., classifying grain varieties).   
+Kaggle
+
+Feature Scaling: Utilizing StandardScaler to normalize features with varying units/variance before feeding them into distance-based algorithms like K-Means.
+
+🌳 Module 2: Visualization with Hierarchical Clustering and t-SNE
+When data cannot be easily separated by flat partitioning, hierarchical structures and non-linear manifold learning provide deep visual insight.   
+DataCamp
+
+Hierarchical Clustering (linkage, dendrogram): Iteratively merges closest data samples or clusters using linkage criteria (e.g., complete, single, average linkage) to yield tree-based hierarchies.
+
+t-SNE (t-Distributed Stochastic Neighbor Embedding): Maps high-dimensional datasets into a 2D or 3D space while preserving local neighbor proximities, ideal for visual cluster inspection.
+
+📐 Module 3: Decorrelating Your Data and Dimension Reduction (PCA)
+High-dimensional datasets suffer from the curse of dimensionality and multicollinearity. Principal Component Analysis (PCA) transforms correlated features into orthogonal axes of maximal variance.
+
+Pearson Correlation: Quantified linear relationships between features.
+
+Intrinsic Dimension: Determined true underlying dimensionality by analyzing explained variance bars across principal components (pca.explained_variance_).
+
+Dimensionality Reduction: Compressed feature spaces to improve downstream efficiency while retaining maximal variance.
+
+💡 Module 4: Discovering Interpretable Features & Recommender Systems (NMF)
+Non-Negative Matrix Factorization (NMF) factorizes high-dimensional non-negative matrices into lower-rank parts, making it exceptionally powerful for text mining and image decomposition.
+
+Text Mining & Topic Modeling:
+
+Combined TfidfVectorizer with NMF to uncover latent document topics from Wikipedia corpora.
+
+Extracted dominant vocabulary using .nlargest() on component weights.
+
+Image Parts-Based Decomposition:
+
+Decomposed LED display digit arrays (samples) into distinct structural parts rather than abstract global components (unlike PCA).
+
+Recommendation Systems (Cosine Similarity):
+
+Applied MaxAbsScaler, NMF, and Normalizer inside a scikit-learn Pipeline.
+
+Calculated vector dot products (df.dot(article)) on normalized features to build high-accuracy recommendation engines for Wikipedia articles and musical artists.
+
+🛠️ Summary Code Architecture & Pipeline Design
+Below is a master reference pattern demonstrating how preprocessing, dimensionality reduction/NMF, and modeling are chained using scikit-learn pipelines:
+
+Python
+# Import necessary modules
+import pandas as pd
+from sklearn.decomposition import NMF
+from sklearn.preprocessing import MaxAbsScaler, Normalizer
+from sklearn.pipeline import make_pipeline
+
+# 1. Build a robust unsupervised pipeline for feature extraction & recommendation
+scaler = MaxAbsScaler()
+nmf = NMF(n_components=20, random_state=42)
+normalizer = Normalizer()
+
+pipeline = make_pipeline(scaler, nmf, normalizer)
+
+# 2. Fit and transform raw features (e.g., user listening history or word counts)
+norm_features = pipeline.fit_transform(raw_data)
+
+# 3. Build similarity DataFrame for downstream recommendations
+df = pd.DataFrame(norm_features, index=entity_names)
+
+# 4. Query similarities for a target entity (e.g., 'Bruce Springsteen')
+target_entity = df.loc['Bruce Springsteen']
+similarities = df.dot(target_entity)
+
+# Output top recommendations
+print(similarities.nlargest())
+🎉 Course Completion Status
+Status: Complete ✅
+
+Key Skills Mastered: Unsupervised Clustering (K-Means, Hierarchical), Manifold Learning (t-SNE), Linear Feature Extraction (PCA), and Part-Based Matrix Factorization (NMF).   
+DataCamp
