@@ -1,0 +1,91 @@
+🐧 Clustering Antarctic Penguin Species: Unsupervised Learning Capstone
+A machine learning project leveraging unsupervised clustering techniques (K-Means and feature preprocessing pipelines) to segment and analyze morphological data of penguin populations in Antarctica.
+
+📂 Project Overview
+Researchers in Antarctica collected measurements for native penguin species (Adelie, Chinstrap, and Gentoo), but the species labels were omitted from the dataset (penguins.csv). This capstone project applies unsupervised learning algorithms to group the penguins into clusters based on their physical dimensions and characteristics.
+
+📊 Dataset Features
+The cleaned dataset contains morphological measurements and demographic details:
+
+culmen_length_mm: Culmen (bill) length in millimeters
+
+culmen_depth_mm: Culmen (bill) depth in millimeters
+
+flipper_length_mm: Flipper length in millimeters
+
+body_mass_g: Body mass in grams
+
+sex: Penguin sex (encoded into numeric binary dummy variables)
+
+🛠️ Methodology & Workflow
+Data Cleaning & Preprocessing:
+
+Loaded the raw CSV data using pandas.
+
+Dropped missing/null records to ensure distance calculations remain unbiased.
+
+Applied dummy encoding (pd.get_dummies()) to handle categorical features like penguin sex.
+
+Standardized all features using StandardScaler so variables with larger scales (such as body mass) do not disproportionately dominate the cluster distance metrics.
+
+Unsupervised Modeling (K-Means Clustering):
+
+Initialized and fitted a KMeans model with optimized clusters (
+𝐾
+=
+4
+K=4) to capture distinct anatomical groupings and sex variations across the species.
+
+Assigned cluster labels (label) back to the observations.
+
+Statistical Aggregation (stat_penguins):
+
+Grouped the dataset by cluster labels and computed the mean for each numeric feature, producing a clean summary table free of non-numeric data.
+
+💻 Code Implementation
+Python
+# Import Required Packages
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+# 1. Load and inspect the dataset
+penguins_df = pd.read_csv("penguins.csv")
+print("Initial Data Shape:", penguins_df.shape)
+
+# Drop missing values to ensure clean data for scaling and clustering
+penguins_df = penguins_df.dropna()
+
+# 2. Pre-process the dataset: Create dummy variables for categorical columns (sex)
+penguins_clean = pd.get_dummies(penguins_df, drop_first=True, dtype=int)
+
+# 3. Scale the features using StandardScaler
+scaler = StandardScaler()
+penguins_scaled = scaler.fit_transform(penguins_clean)
+penguins_preprocessed = pd.DataFrame(penguins_scaled, columns=penguins_clean.columns)
+
+# 4. Perform K-Means Clustering (k=4 clusters)
+kmeans = KMeans(n_clusters=4, random_state=42, n_init=10)
+kmeans.fit(penguins_preprocessed)
+
+# Assign cluster labels back to the dataframe
+penguins_df['label'] = kmeans.labels_
+
+# 5. Create `stat_penguins` summarizing the mean of numeric variables by cluster
+stat_penguins = penguins_df.groupby('label').mean(numeric_only=True)
+
+# Display the resulting summary table
+print(stat_penguins)
+📈 Results & Cluster Preview (stat_penguins)
+After running the unsupervised pipeline, the resulting cluster means provide clear anatomical distinctions between the groups:
+
+Cluster Label (label)	Culmen Length (mm)	Culmen Depth (mm)	Flipper Length (mm)	Body Mass (g)
+0	43.88	19.11	194.76	4006.60
+1	45.56	14.24	212.71	4679.74
+2	40.22	17.61	189.05	3419.16
+3	49.47	15.72	221.54	5484.84
+🏆 Project Status
+Status: Successfully Completed & Submitted (+1500 XP)
+
+Key Takeaway: Unsupervised clustering successfully identified natural morphological groupings within the unlabelled Antarctic penguin data, mirroring the underlying physical variations of the species.
