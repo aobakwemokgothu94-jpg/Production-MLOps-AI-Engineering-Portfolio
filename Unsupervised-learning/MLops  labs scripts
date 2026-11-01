@@ -1,0 +1,65 @@
+Unsupervised Learning in Python: PortfolioA collection of machine learning scripts and exercises demonstrating foundational unsupervised learning techniques using scikit-learn, SciPy, pandas, and matplotlib. This repository covers dataset exploration, feature scaling, pipelines, K-Means clustering, and hierarchical clustering visualizations.📋 Table of ContentsOverviewDatasets & Tasks1. Grain Varieties Clustering (K-Means)2. Fish Species Clustering & Pipelines3. Stock Market Movement Clustering4. Eurovision Hierarchical Clustering & DendrogramsPrerequisites & DependenciesProject Structure & Code Previews🔍 OverviewUnsupervised learning allows us to discover hidden patterns or grouping structures in unlabeled data. This project highlights:Using K-Means inertia graphs (elbow method) to find an optimal number of clusters ($k$).Building scikit-learn pipelines combining preprocessing transformers (StandardScaler, Normalizer) with estimators (KMeans).Evaluating cluster quality against ground truth labels using Pandas cross-tabulations (pd.crosstab).Visualizing relationships and hierarchical structures using SciPy linkage dendrograms.📊 Datasets & Tasks1. Grain Varieties Clustering (K-Means)Goal: Group grain samples into clusters based on geometric measurements (area, perimeter, length, etc.) and compare them against true varieties (Kama, Rosa, and Canadian).Technique: K-Means clustering, inertia calculation (inertia_), and cross-tabulation.2. Fish Species Clustering & PipelinesGoal: Group fish by measurements (weight, length, height-to-length ratio) with vastly different scales.Technique: Feature standardization via StandardScaler chained into a KMeans model using make_pipeline.3. Stock Market Movement ClusteringGoal: Cluster companies using daily stock price fluctuations over a multi-year period to identify which stocks move together.Technique: Independent sample scaling via Normalizer combined with KMeans ($k=10$).4. Eurovision Hierarchical Clustering & DendrogramsGoal: Group countries based on their voting behavior during the Eurovision Song Contest to uncover cultural, linguistic, or geographic ties.Technique: Agglomerative hierarchical clustering using SciPy's linkage and dendrogram functions.📦 Prerequisites & DependenciesMake sure you have the required Python libraries installed before running the scripts:Bashpip install scikit-learn pandas matplotlib scipy numpy
+💻 Project Structure & Code PreviewsTask 1: Finding Optimal Clusters & Evaluating Grain DataPythonfrom sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Finding optimal k using inertia
+ks = range(1, 6)
+inertias = []
+
+for k in ks:
+    model = KMeans(n_clusters=k)
+    model.fit(samples)
+    inertias.append(model.inertia_)
+
+plt.plot(ks, inertias, '-o')
+plt.xlabel('number of clusters, k')
+plt.ylabel('inertia')
+plt.show()
+
+# Clustering into 3 groups and cross-tabulating
+model = KMeans(n_clusters=3)
+labels = model.fit_predict(samples)
+df = pd.DataFrame({'labels': labels, 'varieties': varieties})
+print(pd.crosstab(df['labels'], df['varieties']))
+Task 2: Standardizing and Clustering Fish DataPythonfrom sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+import pandas as pd
+
+scaler = StandardScaler()
+kmeans = KMeans(n_clusters=4)
+pipeline = make_pipeline(scaler, kmeans)
+
+pipeline.fit(samples)
+labels = pipeline.predict(samples)
+
+df = pd.DataFrame({'labels': labels, 'species': species})
+print(pd.crosstab(df['labels'], df['species']))
+Task 3: Clustering Stock MovementsPythonfrom sklearn.preprocessing import Normalizer
+from sklearn.cluster import KMeans
+from sklearn.pipeline import make_pipeline
+import pandas as pd
+
+normalizer = Normalizer()
+kmeans = KMeans(n_clusters=10)
+pipeline = make_pipeline(normalizer, kmeans)
+
+pipeline.fit(movements)
+labels = pipeline.predict(movements)
+
+df = pd.DataFrame({'labels': labels, 'companies': companies})
+print(df.sort_values('labels'))
+Task 4: Hierarchical Clustering (Eurovision Voting)Pythonfrom scipy.cluster.hierarchy import linkage, dendrogram
+import matplotlib.pyplot as plt
+
+# Perform hierarchical clustering
+mergings = linkage(samples, method='complete')
+
+# Plot the dendrogram
+dendrogram(mergings,
+           labels=country_names,
+           leaf_rotation=90,
+           leaf_font_size=6)
+
+plt.show()
