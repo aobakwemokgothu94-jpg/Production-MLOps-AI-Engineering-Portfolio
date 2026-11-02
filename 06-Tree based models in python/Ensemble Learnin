@@ -1,0 +1,69 @@
+# Ensemble Learning & Tree-Based Models in Python
+
+This repository documents hands-on coding exercises and practical implementations focusing on ensemble machine learning techniques using `scikit-learn`, including Voting Classifiers, Bagging, Out-of-Bag (OOB) evaluation, Random Forests, and Feature Importance analysis.
+
+---
+
+## 🚀 Key Concepts & Techniques Covered
+
+### 1. Voting Classifiers
+* **Concept:** Combines predictions from multiple distinct machine learning models (e.g., Logistic Regression, K-Nearest Neighbors, and Classification Trees) to make a final prediction via majority voting.
+* **Key Implementation:** Instantiating a `VotingClassifier` using pre-defined lists of estimators to improve overall generalization accuracy compared to individual models.
+
+### 2. Bagging (Bootstrap Aggregating) & Out-of-Bag (OOB) Evaluation
+* **Concept:** Reduces variance by training multiple base estimators (typically Decision Trees) on bootstrapped subsets of the original dataset.
+* **OOB Score:** Evaluates generalization performance without a separate validation set by testing trees on the samples they weren't trained on (`oob_score=True`).
+
+### 3. Random Forests
+* **Concept:** An extension of bagging that introduces randomized feature selection at each tree split to further decorrelate trees and enhance robustness.
+* **Applications:** Applied to both regression tasks (e.g., predicting bike rental demand) and classification tasks.
+* **Feature Importances:** Automatically computes and visualizes feature predictive power (`feature_importances_`) using pandas and matplotlib to interpret model decisions.
+
+---
+
+## 📂 Code Highlights
+
+### Evaluating Individual Classifiers & Voting Classifier
+```python
+from sklearn.ensemble import VotingClassifier
+from sklearn.metrics import accuracy_score
+
+# Instantiate and fit a voting classifier
+vc = VotingClassifier(estimators=classifiers)
+vc.fit(X_train, y_train)
+
+# Predict and evaluate
+y_pred = vc.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Voting Classifier Accuracy: {accuracy:.3f}")
+Training a Bagging Classifier with OOB Score
+Python
+from sklearn.ensemble import BaggingClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+dt = DecisionTreeClassifier(min_samples_leaf=8, random_state=1)
+bc = BaggingClassifier(base_estimator=dt, n_estimators=50, oob_score=True, random_state=1)
+
+bc.fit(X_train, y_train)
+print(f"OOB Accuracy: {bc.oob_score_:.3f}")
+Random Forest Regressor & Feature Importance Visualization
+Python
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestRegressor
+
+# Train Random Forest Regressor
+rf = RandomForestRegressor(n_estimators=25, random_state=2)
+rf.fit(X_train, y_train)
+
+# Visualize Feature Importances
+importances = pd.Series(data=rf.feature_importances_, index=X_train.columns)
+importances_sorted = importances.sort_values()
+
+importances_sorted.plot(kind='barh', color='lightgreen')
+plt.title('Feature Importances')
+plt.show()
+🛠️ Tech Stack & Tools
+Language: Python
+
+Libraries: scikit-learn, pandas, matplotlib
