@@ -1,0 +1,58 @@
+Classification and Regression Trees (CART)
+This directory contains practical implementations and exercises completed as part of Chapter 1 of the Machine Learning with Tree-Based Models in Python course.
+
+📌 Overview & Core Concepts
+Supervised learning models known as Classification and Regression Trees (CART) split the feature space recursively to make predictions:
+
+Classification Trees: Used to predict categorical target labels by dividing feature regions. Splitting criteria can be evaluated using either the Gini Index or Entropy (Information Gain).
+
+Regression Trees: Used to predict continuous numeric targets by minimizing variance or Mean Squared Error (MSE) within terminal leaves.
+
+🛠️ Summary of Exercises & Code Implementations
+1. Training & Evaluating a Classification Tree
+Dataset: Wisconsin Breast Cancer Dataset (sklearn.datasets)
+
+Task: Predict whether a tumor is malignant or benign based on radius_mean and concave points_mean.
+
+Implementation:
+
+Python
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# Instantiate and fit the classifier
+dt = DecisionTreeClassifier(max_depth=6, random_state=1)
+dt.fit(X_train, y_train)
+
+# Predict and evaluate accuracy
+y_pred = dt.predict(X_test)
+acc = accuracy_score(y_test, y_pred)
+print(f"Test set accuracy: {acc:.2f}")
+2. Information Criteria: Entropy vs. Gini Index
+Task: Trained a classification tree using all 30 features with criterion='entropy' and compared it against the Gini index criterion.
+
+Key Takeaway: Both entropy and Gini index yield extremely high performance, though Gini index is often chosen by default due to faster computation speeds.
+
+3. Training & Evaluating a Regression Tree
+Dataset: Auto-MPG dataset
+
+Task: Predict car fuel consumption (mpg) using available features.
+
+Implementation:
+
+Python
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.metrics import mean_squared_error as MSE
+
+# Instantiate and fit the regressor
+dt_reg = DecisionTreeRegressor(max_depth=8, min_samples_leaf=0.13, random_state=3)
+dt_reg.fit(X_train, y_train)
+
+# Evaluate using Root Mean Squared Error (RMSE)
+y_pred_dt = dt_reg.predict(X_test)
+rmse_dt = MSE(y_test, y_pred_dt) ** (1/2)
+print(f"Regression Tree Test Set RMSE: {rmse_dt:.2f}")
+4. Decision Trees vs. Linear Models
+Compared the rectangular decision boundaries of decision trees against the single linear decision boundaries of Logistic Regression and Linear Regression.
+
+Finding: Non-parametric tree models often capture non-linear interactions better, resulting in lower test errors on complex structured relationships.
