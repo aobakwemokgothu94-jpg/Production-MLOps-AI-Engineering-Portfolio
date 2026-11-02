@@ -1,0 +1,72 @@
+Boosting — Summary & Practical Implementation
+This section of the course explores Boosting, an ensemble meta-algorithm that builds an ensemble sequentially by training each base model (usually shallow decision trees, or CARTs) to correct the errors made by the previous models.
+
+🚀 Key Concepts & Techniques Learned
+1. AdaBoost (Adaptive Boosting)
+Mechanism: In AdaBoost, each subsequent tree is trained on the weighted training dataset, where misclassified instances from the previous tree are assigned higher weights so the next tree focuses hard on them.
+
+Prediction: Final predictions are determined via weighted majority vote (for classification) or weighted sum (for regression).
+
+Evaluation: Scored binary classifiers using metrics like ROC AUC (roc_auc_score from sklearn.metrics).
+
+2. Gradient Boosting (GB)
+Mechanism: Instead of adjusting sample weights like AdaBoost, Gradient Boosting sequentially fits new trees to the residual errors (pseudo-residuals) of the prior predictions, using gradient descent optimization.
+
+Key Hyperparameters:
+
+max_depth: Controls the depth of each individual regression tree (typically set to shallow values like 3 or 4).
+
+n_estimators: Defines the number of boosting stages (trees) to build.
+
+3. Stochastic Gradient Boosting (SGB)
+Mechanism: To mitigate overfitting and add diversity to the ensemble, Stochastic Gradient Boosting introduces randomization at each boosting step:
+
+Subsampling (subsample): Each tree is trained on a fraction (e.g., 90%) of the available training data.
+
+Max Features (max_features): Each tree considers a random subset of features when looking for the best split.
+
+Performance: Typically yields better generalization and lowers test set RMSE compared to standard gradient boosting.
+
+💻 Code Snippets & Quick Reference
+Training & Evaluating AdaBoost Classifier
+Python
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import roc_auc_score
+
+# Instantiate and fit AdaBoost classifier
+ada = AdaBoostClassifier(n_estimators=200, random_state=2)
+ada.fit(X_train, y_train)
+
+# Predict probabilities for the positive class
+y_pred_proba = ada.predict_proba(X_test)[:, 1]
+
+# Evaluate ROC AUC score
+ada_roc_auc = roc_auc_score(y_test, y_pred_proba)
+print('ROC AUC score: {:.2f}'.format(ada_roc_auc))
+Training & Evaluating Gradient Boosting Regressor
+Python
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error as MSE
+
+# Instantiate and fit Gradient Boosting Regressor
+gb = GradientBoostingRegressor(max_depth=4, n_estimators=200, random_state=2)
+gb.fit(X_train, y_train)
+
+# Predict and compute RMSE
+y_pred = gb.predict(X_test)
+rmse_test = MSE(y_test, y_pred)**(1/2)
+print('Test set RMSE of gb: {:.3f}'.format(rmse_test))
+Training & Evaluating Stochastic Gradient Boosting (SGB) Regressor
+Python
+# Instantiate Stochastic Gradient Boosting Regressor
+sgbr = GradientBoostingRegressor(max_depth=4,
+                                 subsample=0.9,
+                                 max_features=0.75,
+                                 n_estimators=200,
+                                 random_state=2)
+
+# Fit and evaluate
+sgbr.fit(X_train, y_train)
+y_pred = sgbr.predict(X_test)
+rmse_test = MSE(y_test, y_pred)**(1/2)
+print('Test set RMSE of sgbr: {:.3f}'.form
