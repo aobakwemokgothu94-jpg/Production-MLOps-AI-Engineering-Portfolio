@@ -1,0 +1,58 @@
+Regression with XGBoost & Model Evaluation
+Extreme Gradient Boosting with XGBoost course! In this chapter, we transition from classification to regression tasks, explore different types of base learners, evaluate models using cross-validation metrics, and dive into model visualization and tuning.
+
+📌 Key Topics & Concepts Covered
+1. Trees as Base Learners
+XGBoost defaults to using decision trees as base learners (booster="gbtree").
+
+You can build regression models using xgb.XGBRegressor to predict continuous target variables (such as housing prices in Ames, Iowa).
+
+2. Linear Base Learners
+XGBoost also supports linear base learners (booster="gblinear"), allowing you to create regularized linear regressions using the powerful learning API.
+
+These require using the non-scikit-learn compatible functions like xgb.train() and converting data into xgb.DMatrix objects.
+
+3. Evaluating Model Quality
+Metrics: Use metrics="rmse" (Root Mean Squared Error) or metrics="mae" (Mean Absolute Error) inside xgb.cv() to assess out-of-sample model performance.
+
+Regularization: Control model complexity and prevent overfitting by tuning L2 regularization (lambda) and L1 regularization (alpha) parameters.
+
+4. Model Visualization & Interpretability
+Individual Trees: Use xgb.plot_tree() with the num_trees parameter (0-indexed) and rankdir="LR" to visually explore how decisions are made across boosting rounds.
+
+Feature Importance: Use xgb.plot_importance() to rank features based on how frequently they are split across all trees in the model.
+
+5. Hyperparameter Tuning & Early Stopping
+Boosting Rounds: Tuning the number of boosting rounds (num_boost_round) directly impacts performance.
+
+Early Stopping: Use the early_stopping_rounds parameter in xgb.cv() to automatically halt training when the evaluation metric stops improving, saving computation time and preventing overfitting.
+
+🚀 Quick Code Reference
+Training a Tree Regressor
+Python
+import xgboost as xgb
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+# Instantiate and fit regressor
+xg_reg = xgb.XGBRegressor(seed=123, objective="reg:squarederror", n_estimators=10)
+xg_reg.fit(X_train, y_train)
+
+# Predict and evaluate
+preds = xg_reg.predict(X_test)
+rmse = np.sqrt(mean_squared_error(y_test, preds))
+Cross-Validation with Early Stopping
+Python
+housing_dmatrix = xgb.DMatrix(data=X, label=y)
+params = {"objective": "reg:squarederror", "max_depth": 4}
+
+cv_results = xgb.cv(
+    dtrain=housing_dmatrix, 
+    params=params, 
+    nfold=3, 
+    num_boost_round=50, 
+    early_stopping_rounds=10, 
+    metrics="rmse", 
+    as_pandas=True, 
+    seed=123
+)
