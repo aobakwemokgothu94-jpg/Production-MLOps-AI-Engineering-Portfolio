@@ -1,0 +1,55 @@
+Cluster Analysis in Python:
+This repository/log contains code solutions, key concepts, and summaries for the exercises completed across Hierarchical Clustering and K-Means Clustering.📂 Chapter 1: Hierarchical ClusteringHierarchical clustering builds a hierarchy of clusters either through an agglomerative approach (bottom-up) or a divisive approach (top-down). It is great for finding natural groupings and visualizing data via dendrograms, but can be computationally expensive on large datasets.Key Concepts & FunctionsLinkage Matrix (linkage): Calculates the distances between clusters using proximity metrics (e.g., 'ward', 'complete', 'average').Dendrogram (dendrogram): A tree-like diagram showing how clusters are merged at various distance thresholds.Cluster Assignment (fcluster): Assigns flat cluster labels from a linkage object based on a criterion (e.g., criterion='maxclust' for a target number of clusters).Code Snippets1. Generating a Linkage Matrix & DendrogramPythonfrom scipy.cluster.hierarchy import linkage, dendrogram
+import matplotlib.pyplot as plt
+
+# Create the linkage matrix using Ward's method
+distance_matrix = linkage(comic_con[['x_scaled', 'y_scaled']], method='ward')
+
+# Plot the dendrogram
+dn = dendrogram(distance_matrix)
+plt.show()
+2. Performing Hierarchical Clustering on Larger Datasets (e.g., FIFA 18)Pythonfrom scipy.cluster.hierarchy import linkage, fcluster
+import seaborn as sns
+
+# Fit large scaled data 
+distance_matrix = linkage(fifa[['scaled_sliding_tackle', 'scaled_aggression']], 'ward')
+
+# Assign flat cluster labels (e.g., 3 clusters)
+fifa['cluster_labels'] = fcluster(distance_matrix, 3, criterion='maxclust')
+
+# View cluster centers via group means
+print(fifa[['scaled_sliding_tackle', 'scaled_aggression', 'cluster_labels']].groupby('cluster_labels').mean())
+
+# Visualize with Seaborn
+sns.scatterplot(x='scaled_sliding_tackle', y='scaled_aggression', hue='cluster_labels', data=fifa)
+plt.show()
+📂 Chapter 2: K-Means ClusteringK-means clustering overcomes the runtime bottleneck of hierarchical clustering by iteratively optimizing cluster centers (centroids) to minimize within-cluster variance (distortion).Key Concepts & Functionskmeans(): Computes cluster centers given observations and a target number of clusters $k$. Returns the cluster centers and the final distortion.vq() (Vector Quantization): Assigns individual data points (observations) to the nearest cluster centers.The Elbow Method: A heuristic method to find the optimal $k$ by plotting the distortion against a range of cluster counts and looking for an "elbow" inflection point.Limitations of K-Means:Highly sensitive to initial seeds (especially on uniform/random data).Biased toward forming equal-sized, spherical/convex clusters because it attempts to minimize variance/distortion.Code Snippets1. Basic K-Means Clustering & AssignmentPythonfrom scipy.cluster.vq import kmeans, vq
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Generate cluster centers for k = 2
+cluster_centers, distortion = kmeans(comic_con[['x_scaled', 'y_scaled']], 2)
+
+# Assign cluster labels to data points
+comic_con['cluster_labels'], distortion_list = vq(comic_con[['x_scaled', 'y_scaled']], cluster_centers)
+
+# Plot clusters
+sns.scatterplot(x='x_scaled', y='y_scaled', hue='cluster_labels', data=comic_con)
+plt.show()
+2. Implementing the Elbow MethodPythonimport pandas as pd
+
+distortions = []
+num_clusters = range(1, 7)
+
+# Loop to collect distortions for various cluster counts
+for i in num_clusters:
+    cluster_centers, distortion = kmeans(comic_con[['x_scaled', 'y_scaled']], i)
+    distortions.append(distortion)
+
+# Build a DataFrame for plotting
+elbow_plot = pd.DataFrame({'num_clusters': num_clusters, 'distortions': distortions})
+
+# Plot the elbow curve
+sns.lineplot(x='num_clusters', y='distortions', data=elbow_plot)
+plt.xticks(num_clusters)  # Cleanly align ticks with cluster numbers
+plt.show()
