@@ -1,0 +1,93 @@
+Using XGBoost in Pipelines 
+Extreme Gradient Boosting with XGBoost course! In this final chapter, you'll learn how to integrate XGBoost estimators into scikit-learn pipelines, handle categorical features and missing values using data transformers like DictVectorizer and Imputer, and build end-to-end machine learning workflows.
+
+📌 Key Topics & Concepts Covered
+1. Scikit-learn Pipelines Review
+Pipelines take a list of named tuples (steps) containing transformers and a final estimator.
+
+They allow sequential execution of data transformations followed by model training, maintaining a clean and leak-free workflow.
+
+Pipelines integrate seamlessly with cross_val_score, GridSearchCV, and RandomizedSearchCV.
+
+2. Handling Categorical Data
+LabelEncoder vs. OneHotEncoder: Traditional two-step encoding methods can be cumbersome and aren't fully pipeline-friendly for multi-column categorical datasets.
+
+DictVectorizer: Converts a list of feature mappings (dictionaries) directly into numerical vectors, making it ideal for encoding categorical columns inside a scikit-learn pipeline in a single step.
+
+3. Handling Missing Data
+Real-world datasets often contain missing values (NaN).
+
+Using scikit-learn's Imputer (or SimpleImputer) inside a pipeline allows you to impute missing values (using mean, median, or most frequent strategies) before passing the data to your XGBoost model.
+
+XGBoost also handles missing values natively by learning the optimal default direction for missing splits during tree construction.
+
+📝 Previews of Every Exercise Completed in Chapter 3
+1. Exploratory Data Analysis & Encoding Categorical Features
+Concept: Transforming categorical string features in the Ames housing dataset into numerical arrays using DictVectorizer.
+
+Snippet:
+
+Python
+from sklearn.feature_extraction import DictVectorizer
+
+# Convert DataFrame to a dictionary of records
+df_dict = df.to_dict(orient="records")
+
+# Instantiate DictVectorizer and fit-transform
+dv = DictVectorizer(sparse=False)
+df_encoded = dv.fit_transform(df_dict)
+2. Putting a Classifier and Transformer into a Pipeline
+Concept: Chaining a preprocessing transformer (like StandardScaler or DictVectorizer) with an XGBoost classifier or regressor using Pipeline.
+
+Snippet:
+
+Python
+from sklearn.pipeline import Pipeline
+
+# Create the pipeline with a transformer and an XGBoost regressor
+pipeline = Pipeline([
+    ("vect", DictVectorizer(sparse=False)),
+    ("xgb", xgb.XGBRegressor())
+])
+3. Cross-Validating Your Pipeline
+Concept: Evaluating pipeline performance reliably using cross_val_score.
+
+Snippet:
+
+Python
+from sklearn.model_selection import cross_val_score
+
+# Perform cross-validation
+scores = cross_val_score(pipeline, X, y, scoring="neg_mean_squared_error", cv=4)
+rmse_scores = np.sqrt(np.abs(scores))
+print("Mean RMSE:", rmse_scores.mean())
+4. Kidney Disease Case Study: Imputation & Pipelines
+Concept: Using Imputer (or SimpleImputer) to handle missing data combined with an XGBoost classifier in a pipeline.
+
+Snippet:
+
+Python
+from sklearn.impute import SimpleImputer
+from sklearn.pipeline import Pipeline
+
+# Create pipeline with imputer and classifier
+imp_clf_pipeline = Pipeline([
+    ("imputer", SimpleImputer(strategy="most_frequent")),
+    ("clf", xgb.XGBClassifier())
+])
+5. Tuning Pipeline Parameters with GridSearchCV
+Concept: Optimizing hyperparameters across both pipeline preprocessing steps and the XGBoost estimator simultaneously using grid search.
+
+Snippet:
+
+Python
+from sklearn.model_selection import GridSearchCV
+
+# Define parameter grid using pipeline step names as prefixes
+params = {
+    "clf__max_depth": [3, 5, 7],
+    "clf__n_estimators": [50, 100]
+}
+
+grid_pipeline = GridSearchCV(estimator=imp_clf_pipeline, param_grid=params, cv=3, scoring="accuracy")
+grid_pipeline.fit(X_train, y_train)
