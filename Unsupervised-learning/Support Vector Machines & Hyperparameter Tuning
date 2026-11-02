@@ -1,0 +1,73 @@
+# Linear Classifiers in Python: Support Vector Machines & Hyperparameter Tuning
+
+A collection of practical exercises and scripts exploring supervised learning, linear classifiers, support vector machines (SVMs), and hyperparameter optimization using `scikit-learn`.
+
+---
+
+## 📌 Project Overview
+This repository documents hands-on implementations covering the mechanics of linear classifiers, specifically focusing on:
+* **Support Vector Machines (SVMs):** Understanding the role of support vectors and how removing non-support vectors impacts the decision boundary.
+* **Hyperparameter Optimization:** Using `GridSearchCV` to jointly tune regularization parameters ($C$) and kernel coefficients ($\gamma$) for RBF SVMs.
+* **Linear Models via SGD:** Comparing hinge loss (linear SVM) versus log-loss (logistic regression) using `SGDClassifier` alongside regularization strength tuning ($\alpha$).
+
+---
+
+## ⚙️ Key Implementations & Scripts
+
+### 1. The Role of Support Vectors
+Demonstrating that decision boundaries are entirely determined by support vectors rather than the entire training dataset:
+```python
+from sklearn.svm import SVC
+
+# Train a linear SVM on the full dataset
+svm = SVC(kernel="linear")
+svm.fit(X, y)
+
+# Filter dataset to retain only support vectors
+X_small = X[svm.support_]
+y_small = y[svm.support_]
+
+# Train a new SVM using only support vectors (yields identical decision boundary)
+svm_small = SVC(kernel="linear")
+svm_small.fit(X_small, y_small)
+2. Grid Search Cross-Validation (GridSearchCV)
+Tuning hyperparameters to maximize cross-validation accuracy on digitized datasets:
+
+RBF Kernel Tuning (gamma and C):
+
+Python
+from sklearn.model_selection import GridSearchCV
+
+svm = SVC()
+parameters = {'C': [0.1, 1, 10], 'gamma': [0.00001, 0.0001, 0.001, 0.01, 0.1]}
+searcher = GridSearchCV(svm, parameters)
+searcher.fit(X_train, y_train)
+
+print("Best CV params:", searcher.best_params_)
+print("Best CV accuracy:", searcher.best_score_)
+print("Test accuracy:", searcher.score(X_test, y_test))
+3. Stochastic Gradient Descent Classifiers (SGDClassifier)
+Searching over regularization strength and loss functions:
+
+Python
+from sklearn.linear_model import SGDClassifier
+
+linear_classifier = SGDClassifier(random_state=0)
+parameters = {
+    'alpha': [0.00001, 0.0001, 0.001, 0.01, 0.1, 1],
+    'loss': ['hinge', 'log_loss']
+}
+searcher = GridSearchCV(linear_classifier, parameters, cv=10)
+searcher.searcher.fit(X_train, y_train)
+📊 Results Summary
+Model / Approach	Hyperparameters	Cross-Validation Accuracy	Test Accuracy
+RBF SVM (GridSearchCV)	C: 1, gamma: 0.001	99.89%	99.89%
+Linear Classifier (SGDClassifier)	alpha: 0.001, loss: 'hinge'	94.91%	96.11%
+🛠️ Requirements
+Python 3.x
+
+scikit-learn
+
+numpy
+
+matplotlib (for classifier boundary visualization plots)
