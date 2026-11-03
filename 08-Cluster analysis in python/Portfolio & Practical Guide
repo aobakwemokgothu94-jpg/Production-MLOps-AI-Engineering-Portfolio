@@ -1,0 +1,71 @@
+📁 Cluster Analysis in Python: Course Portfolio & Practical Guide
+Welcome to my comprehensive project repository documenting the concepts, code implementations, and practical takeaways from the Cluster Analysis in Python course on DataCamp. This repository bridges exploratory unsupervised machine learning techniques—ranging from image pixel compression and text vectorization to player profiling in sports datasets.
+
+🚀 Key Project Modules & Implementations
+1. Image Color Quantization (The Batman Example)
+Objective: Reduce the number of colors in an image using K-Means clustering while preserving the dominant visual features.
+
+Key Techniques:
+
+Extracting RGB channels into a pandas DataFrame (batman_df).
+
+Standardizing pixel values to compute scaled coordinates (scaled_red, scaled_green, scaled_blue).
+
+Using the Elbow Method to find the optimal number of clusters (
+𝑘
+=
+3
+k=3).
+
+Mapping cluster centers back to valid color ranges using standard deviations:
+
+Python
+colors.append((
+    scaled_r * r_std / 255,
+    scaled_g * g_std / 255,
+    scaled_b * b_std / 255
+))
+2. Document Clustering on Movie Plots
+Objective: Clean, vectorize, and group textual plot descriptions into coherent thematic clusters.
+
+Key Techniques:
+
+TF-IDF Vectorization: Utilizing TfidfVectorizer with custom tokenizers (remove_noise), frequency bounds (min_df=0.1, max_df=0.75), and feature capping (max_features=50).
+
+Dense Matrix Conversion: Transforming sparse TF-IDF matrices via .todense() for compatibility with SciPy's kmeans function.
+
+Term Extraction: Ranking and printing the top three descriptive terms for each cluster using zip dictionaries and sorted value keys.
+
+3. Behavioral Clustering in Sports Analytics (FIFA 18)
+Objective: Segment soccer players based on technical, physical, and tactical attributes to identify tactical archetypes (e.g., complete players, defenders, attackers).
+
+Key Techniques:
+
+Multi-feature Scaling: Standardizing attribute columns (pace, shooting, passing, dribbling, defending, physical).
+
+Centroid Assignment: Generating 
+𝑘
+k centroids and applying vq() to map individual rows to cluster labels.
+
+Exploratory Validation: Grouping data using .groupby('cluster_labels') to evaluate cluster size, mean wages (eur_wage), and core attribute profiles.
+
+💻 Code Snippet Reference
+Python
+# Core K-Means workflow example using SciPy & Pandas
+from scipy.cluster.vq import kmeans, vq
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 1. Generate centroids
+cluster_centers, distortion = kmeans(fifa[scaled_features], 2)
+
+# 2. Assign labels
+fifa['cluster_labels'], _ = vq(fifa[scaled_features], cluster_centers)
+
+# 3. Analyze output profiles
+print(fifa.groupby('cluster_labels')[scaled_features].mean())
+🌟 Summary & Next Steps
+Clustering serves as a foundational exploratory step in data science pipelines—revealing hidden structures without prior label supervision. Moving forward, these unsupervised labels can feed into downstream supervised classification models or guide feature engineering workflows.
+
+Completed as part of continuous technical skill development.
