@@ -1,0 +1,74 @@
+# Dimensionality Reduction & Feature Selection in Python
+
+This repository documents hands-on exercises and code snippets exploring the **curse of dimensionality**, train-test data splitting, model evaluation using Support Vector Machines (SVM), and feature selection techniques using the ANSUR dataset.
+
+## 🚀 Key Concepts & Workflow
+
+### 1. The Curse of Dimensionality
+* **The Problem:** High-dimensional datasets (many features) often cause models to **overfit**, memorizing the training data instead of learning general patterns.
+* **The Solution:** Apply dimensionality reduction or feature selection to reduce noise and improve model generalization on unseen data.
+
+### 2. Model Training & Evaluation Workflow
+1. **Train-Test Split:** Splitting the dataset into training and testing sets (typically 70% train / 30% test) to evaluate performance objectively.
+2. **Baseline Model:** Training a Support Vector Classifier (`SVC()`) on the full feature set.
+3. **Dimensionality Reduction:** Restricting features to high-value columns (e.g., `'neckcircumferencebase'`) to combat overfitting and maintain high predictive accuracy.
+4. **Variance Thresholds:** Removing low-variance features that provide little to no distinguishing information using scikit-learn's `VarianceThreshold`.
+
+---
+
+## 💻 Code Examples
+
+### Train-Test Split & SVM Training
+```python
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# Define target variable (y) and features (X)
+y = ansur_df['Gender']
+X = ansur_df.drop('Gender', axis=1)
+
+# Split data into 70% training and 30% test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+# Instantiate and fit the Support Vector Classifier
+svc = SVC()
+svc.fit(X_train, y_train)
+
+# Evaluate model accuracy
+train_accuracy = accuracy_score(y_train, svc.predict(X_train))
+test_accuracy = accuracy_score(y_test, svc.predict(X_test))
+
+print(f"Train Accuracy: {train_accuracy:.2f} | Test Accuracy: {test_accuracy:.2f}")
+Dimensionality Reduction (Single Feature Selection)
+Python
+# Select a single informative feature to reduce dimensionality
+X = ansur_df[['neckcircumferencebase']]
+
+# Split, fit, and evaluate again
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+svc = SVC()
+svc.fit(X_train, y_train)
+
+accuracy_train = accuracy_score(y_train, svc.predict(X_train))
+accuracy_test = accuracy_score(y_test, svc.predict(X_test))
+
+print(accuracy_train, accuracy_test)
+Automated Feature Selection with VarianceThreshold
+Python
+from sklearn.feature_selection import VarianceThreshold
+
+# Initialize VarianceThreshold selector
+sel = VarianceThreshold(threshold=1)
+sel.fit(ansur_df)
+
+# Generate a boolean mask for features meeting the variance threshold
+mask = sel.get_support()
+🛠️ Requirements
+Python 3.x
+
+scikit-learn
+
+pandas
+
+numpy
