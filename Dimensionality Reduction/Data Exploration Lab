@@ -1,0 +1,57 @@
+Feature Selection & Data Exploration Lab
+This repository documents hands-on data analysis and feature engineering workflows in Python using Pandas, NumPy, and Seaborn.
+
+Overview of Tasks
+1. Filtering Out Highly Correlated Features (ansur_df)
+When working with high-dimensional datasets (such as the 99-column numeric ANSUR dataset), multicollinearity can degrade model performance and introduce redundancy.
+
+Correlation Matrix & Absolute Values: Computed the pairwise correlation matrix using .corr().abs().
+
+Upper Triangle Masking: Generated a boolean mask using np.triu() and applied .mask() to isolate one half of the symmetric correlation matrix.
+
+Feature Pruning: Automated the identification and removal of features with a correlation coefficient greater than 0.95, reducing dataset dimensionality while preserving core variance.
+
+2. Spurious Correlations: Nuclear Energy & Pool Drownings (weird_df)
+An exploration into statistical correlation versus causation using real-world data provided by the US Centers for Disease Control & Prevention and Department of Energy.
+
+Data Inspection: Loaded and examined sample records tracking annual pool drownings alongside nuclear energy production metrics.
+
+Data Visualization: Built scatterplots via Seaborn (sns.scatterplot) to visualize the apparent relationship.
+
+Statistical Analysis: Computed the correlation matrix, highlighting a high statistical correlation (
+𝑟
+=
+0.901
+r=0.901) despite the complete lack of causal linkage—emphasizing the importance of domain knowledge over blind statistical feature selection.
+
+Code Reference
+Filtering Correlated Features
+Python
+import numpy as np
+import pandas as pd
+
+# Calculate the correlation matrix and take the absolute value
+corr_df = ansur_df.corr().abs()
+
+# Create a True/False mask for the upper triangle and apply it using .mask()
+mask = np.triu(np.ones_like(corr_df, dtype=bool))
+tri_df = corr_df.mask(mask)
+
+# List column names of highly correlated features (r > 0.95)
+to_drop = [c for c in tri_df.columns if any(tri_df[c] > 0.95)]
+
+# Drop the features in the to_drop list
+reduced_df = ansur_df.drop(columns=to_drop)
+
+print(reduced_df.shape)
+Visualizing Spurious Correlations
+Python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Plot relationship between nuclear energy and pool drownings
+sns.scatterplot(x='nuclear_energy', y='pool_drownings', data=weird_df)
+plt.show()
+
+# Print out the correlation matrix
+print(weird_df.corr())
