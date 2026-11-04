@@ -1,0 +1,83 @@
+🛸 UFO Sighting Data Preprocessing & Machine Learning Pipeline
+An end-to-end machine learning and data preprocessing portfolio project built using Python, Pandas, NumPy, and Scikit-Learn. This project demonstrates advanced data cleaning, feature engineering, text vectorization via TF-IDF, and supervised classification modeling on real-world sighting records.
+
+🛠️ Complete Project Workflow & Technical Highlights
+1. Data Cleaning & Missing Value Treatment
+Inspected dataset columns for missing or null values across critical features.
+
+Dropped incomplete records in key subsets (length_of_time, state, type) to ensure robust model training data.
+
+2. Regular Expressions & Feature Extraction
+Parsed messy, unstructured duration strings into clean numeric columns (minutes) utilizing Python's re module.
+
+Extracted temporal attributes (month, year) from timestamp data using Pandas datetime accessors (.dt).
+
+3. Log Normalization & Variance Reduction
+Analyzed feature distributions and identified extreme variance in the seconds duration column.
+
+Applied natural log transformations (np.log) to compress the scale and generate seconds_log, stabilizing feature variance for modeling.
+
+4. Categorical & Binary Encoding
+Performed binary mapping via conditional lambda functions to encode target location labels (us vs. ca).
+
+Implemented one-hot encoding (pd.get_dummies) on categorical sighting descriptors (type) and merged the resulting dummy matrices back into the primary DataFrame.
+
+5. Natural Language Processing (NLP) & TF-IDF Vectorization
+Transformed unstructured narrative description fields (desc) into dense numerical feature matrices using TF-IDF Vectorization (TfidfVectorizer).
+
+Filtered text vocabulary using custom functions to isolate high-signal predictive tokens.
+
+6. Supervised Machine Learning Models
+K-Nearest Neighbors (KNN): Trained on engineered numerical, temporal, and one-hot encoded features with stratified train-test splits (stratify=y, random_state=42) to predict sighting locations.
+
+Multinomial Naive Bayes (NB): Trained on high-dimensional sparse TF-IDF text vectors to successfully classify sighting characteristics and types based on textual descriptions.
+
+📂 Core Code Implementation
+Data Preprocessing & Feature Engineering
+Python
+import re
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# 1. Log normalize high-variance seconds
+ufo["seconds_log"] = np.log(ufo["seconds"])
+
+# 2. Binary and One-Hot Encoding
+ufo["country_enc"] = ufo["country"].apply(lambda x: 1 if x == "us" else 0)
+type_set = pd.get_dummies(ufo["type"])
+ufo = pd.concat([ufo, type_set], axis=1)
+
+# 3. Datetime Extraction
+ufo["month"] = ufo["date"].dt.month
+ufo["year"] = ufo["date"].dt.year
+
+# 4. TF-IDF Text Vectorization
+vec = TfidfVectorizer()
+desc_tfidf = vec.fit_transform(ufo["desc"])
+Machine Learning Model Training & Evaluation
+Python
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import MultinomialNB
+
+# --- KNN Model: Predicting Country ---
+X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=42)
+knn = KNeighborsClassifier()
+knn.fit(X_train, y_train)
+print(f"KNN Test Accuracy: {knn.score(X_test, y_test):.4f}")
+
+# --- Naive Bayes Model: Predicting Sighting Type from Text ---
+filtered_text = desc_tfidf[:, list(filtered_words)]
+X_train_txt, X_test_txt, y_train_txt, y_test_txt = train_test_split(
+    filtered_text.toarray(), y_type, stratify=y_type, random_state=42
+)
+nb = MultinomialNB()
+nb.fit(X_train_txt, y_train_txt)
+print(f"Naive Bayes Test Accuracy: {nb.score(X_test_txt, y_test_txt):.4f}")
+🚀 Skills & Tools Demonstrated
+Languages: Python
+
+Libraries: Pandas, NumPy, Scikit-Learn
+
+Core Concepts: Data Cleaning, RegEx Parsing, Log Transformations, One-Hot & Binary Encoding, TF-IDF Vectorization, Stratified Splitting, KNN, and Naive Bayes Classification.
