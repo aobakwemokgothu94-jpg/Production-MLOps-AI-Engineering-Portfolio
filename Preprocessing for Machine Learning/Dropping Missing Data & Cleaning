@@ -1,0 +1,42 @@
+Preprocessing for Machine Learning - Chapter Summary README
+1. Dropping Missing Data & Cleaning
+Column Removal: Use .drop(columns=['col1', 'col2']) to drop unneeded spatial or text attributes.
+
+Row Cleanup: Use .dropna(subset=['target_column']) to filter out rows missing essential target data.
+
+2. Correcting Data Types
+Type Casting: Fix columns that are misclassified as object data types despite containing numbers using .astype(int) or .astype(float) so machine learning models can process them correctly.
+
+3. Stratified Sampling
+Maintaining Class Proportions: Always pass stratify=y into train_test_split() when working with imbalanced target variables. This guarantees that minority and majority classes are proportionally represented in both your training and testing sets.
+
+4. Modeling Without Normalizing & Standardization
+The Scale Problem: Features with excessively high variance (like the Proline feature in the wine dataset) can dominate distance-based algorithms like 
+𝑘
+k-nearest neighbors (
+𝑘
+k-NN).
+
+The Fix: Standardization/normalization is vital to bring features onto a comparable scale before model training.
+
+Quick Code Reference
+Python
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+# 1. Clean and convert types
+volunteer_cols = volunteer.drop(columns=['Latitude', 'Longitude'])
+volunteer_subset = volunteer_cols.dropna(subset=['category_desc'])
+volunteer_subset["hits"] = volunteer_subset["hits"].astype(int)
+
+# 2. Define features and labels
+X = volunteer_subset.drop('category_desc', axis=1)
+y = volunteer_subset['category_desc']
+
+# 3. Stratified train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+# 4. Train and score KNN
+knn = KNeighborsClassifier()
+knn.fit(X_train, y_train)
+print(knn.score(X_test, y_test))
