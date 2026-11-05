@@ -1,0 +1,36 @@
+Audio Feature Engineering & Machine Learning PipelineThis repository contains Python scripts and workflows for processing audio data, generating Short-Time Fourier Transform (STFT) spectrograms, extracting spectral features (such as bandwidth and centroid), and building classification models using librosa and scikit-learn.📋 Overview of Code & Scripts1. Calculating a SpectrogramComputes the short-time Fourier transform from raw audio to evaluate spectral content over time.Pythonfrom librosa.core import stft
+
+# Prepare the STFT
+HOP_LENGTH = 2**4
+spec = stft(audio, hop_length=HOP_LENGTH, n_fft=2**7)
+2. Converting to Decibels and VisualizingTransforms amplitude spectrograms into a decibel scale for optimal visualization and comparison against raw waveforms.Pythonfrom librosa.core import amplitude_to_db
+from librosa.display import specshow
+
+# Convert the spectrogram to decibels for visualization
+spec_db = amplitude_to_db(spec)
+
+# Plot the spectrogram over time
+fig, ax = plt.subplots(figsize=(10, 5))
+specshow(spec_db, x_axis='time', y_axis='hz', hop_length=HOP_LENGTH, ax=ax)
+plt.show()
+3. Engineering Spectral Features (Centroid & Bandwidth)Extracts summary spectral features across multiple spectrograms in a loop.Pythonimport librosa as lr
+import numpy as np
+
+bandwidths = []
+centroids = []
+for spec in spectrograms:
+    # Calculate the mean spectral bandwidth
+    this_mean_bandwidth = np.mean(lr.feature.spectral_bandwidth(S=spec))
+    # Calculate the mean spectral centroid
+    this_mean_centroid = np.mean(lr.feature.spectral_centroid(S=spec))
+    # Collect the values
+    bandwidths.append(this_mean_bandwidth)
+    centroids.append(this_mean_centroid)
+4. Combining Features for Classifier InputStacks extracted statistical and spectral features side-by-side into a design matrix $X$ and evaluates model performance via cross-validation.Python# Create X and y arrays
+X = np.column_stack([means, stds, maxs, tempo_mean, tempo_max, tempo_std, bandwidths, centroids])
+y = labels.reshape(-1, 1)
+
+# Fit the model and score on testing data
+percent_score = cross_val_score(model, X, y, cv=5)
+print(np.mean(percent_score))
+🚀 Getting StartedEnsure you have the required libraries installed in your Python environment:Bashpip install librosa numpy scikit-learn mat
