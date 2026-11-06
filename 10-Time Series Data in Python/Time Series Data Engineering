@@ -1,0 +1,85 @@
+Time Series Data Engineering & Preprocessing Toolkit
+A collection of Python scripts built with pandas, numpy, and matplotlib for cleaning, transforming, and extracting powerful features from time-series data.
+
+1. Handling Missing Data via Interpolation
+Description: Fills in missing data points in a time series using various mathematical approaches (zero-order, linear, and quadratic interpolation) and visualizes the results.
+
+Preview:
+
+Python
+# Interpolate using the latest non-missing value
+interpolate_and_plot(prices, 'zero')
+
+# Interpolate linearly
+interpolate_and_plot(prices, 'linear')
+
+# Interpolate with a quadratic function
+interpolate_and_plot(prices, 'quadratic')
+2. Custom Rolling Window Transformations
+Description: Calculates the percentage difference between the final value in a rolling window and the mean of the preceding values, helping create stable stationary signals for machine learning.
+
+Preview:
+
+Python
+def percent_change(series):
+    previous_values = series[:-1]
+    last_value = series[-1]
+    return (last_value - np.mean(previous_values)) / np.mean(previous_values)
+
+# Apply over a rolling window of 20 and plot
+prices.rolling(window=20).apply(percent_change).plot()
+plt.show()
+3. Outlier Detection and Replacement
+Description: Detects data points that deviate more than 3 standard deviations from the series mean and replaces them with the median value (ignoring missing NaN values).
+
+Preview:
+
+Python
+def replace_outliers(series):
+    absolute_differences_from_mean = np.abs(series - np.mean(series))
+    this_mask = absolute_differences_from_mean > (np.std(series) * 3)
+    series[this_mask] = np.nanmedian(series)
+    return series
+
+# Apply over a rolling window and plot
+prices.rolling(window=20).apply(replace_outliers).plot()
+plt.show()
+4. Multi-Feature Rolling Aggregations
+Description: Computes multiple statistical features (minimum, maximum, mean, and standard deviation) simultaneously across a rolling window using NumPy functions.
+
+Preview:
+
+Python
+prices_perc_rolling = prices_perc.rolling(20, min_periods=5, closed='right')
+features_to_calculate = [np.min, np.max, np.mean, np.std]
+
+features = prices_perc_rolling.aggregate(features_to_calculate)
+
+ax = features.plot()
+prices_perc.plot(ax=ax, color='k', alpha=0.3, label='Original')
+plt.legend(loc='upper left')
+plt.show()
+5. Partial Functions for Quantiles/Percentiles
+Description: Uses Python's functools.partial to pre-configure np.percentile across a list of custom quantile values, generating robust features via rolling windows.
+
+Preview:
+
+Python
+from functools import partial
+
+percentiles = [1, 10, 25, 50, 75, 90, 99]
+percentile_functions = [partial(np.percentile, q=p) for p in percentiles]
+
+prices_perc_rolling = prices_perc.rolling(20, min_periods=5, closed='right')
+features_percentiles = prices_perc_rolling.aggregate(percentile_functions)
+6. Datetime Feature Extraction
+Description: Extracts real-world temporal metadata (day of the week, month, and quarter) directly from a pandas datetime index to help models recognize seasonal patterns.
+
+Preview:
+
+Python
+prices_perc['day_of_week'] = prices_perc.index.dayofweek
+prices_perc['month_of_year'] = prices_perc.index.month
+prices_perc['quarter_of_year'] = prices_perc.index.quarter
+
+print(prices_perc.head())
