@@ -1,0 +1,79 @@
+# Python Machine Learning & Feature Engineering Labs
+
+A repository of practical code labs, scripts, and notebooks covering end-to-end data preprocessing, categorical encoding, outlier handling, text feature extraction (`CountVectorizer`, `TfidfVectorizer`, N-grams), and model validation workflows using Python, Pandas, and scikit-learn.
+
+---
+
+## 📂 Repository Structure
+
+```text
+├── 01_data_preprocessing/         # Categorical encoding, binning, and missing value handling
+├── 02_messy_data_outliers/        # Statistical outlier detection and data cleaning
+├── 03_unstructured_text_data/     # Text cleaning, TF-IDF, CountVectorizer, and N-grams
+└── 04_model_validation/           # Model training, train-test splitting, and evaluation metrics
+🚀 Core Topics & Implementation Highlights
+1. Categorical Encoding & Binning
+One-Hot Encoding: Converting categorical variables into binary indicator columns using pd.get_dummies().
+
+Dummy Coding: Dropping reference categories to prevent multicollinearity.
+
+Continuous Binning: Grouping continuous data into discrete interval bins using pd.cut().
+
+2. Messy Data & Outliers
+Missing Value Imputation: Handling null values strategically across numeric and categorical features.
+
+Outlier Filtering: Identifying and removing statistical outliers using standard deviation thresholds and the Interquartile Range (IQR) method.
+
+3. Unstructured Text Feature Engineering
+Text Standardization: Lowercasing and removing non-letter characters using regular expressions (str.replace()).
+
+Metadata Feature Extraction: Calculating character counts, word counts, and average word lengths.
+
+Count Vectorization (CountVectorizer): Converting text corpora into token count matrices, filtering out sparse terms using min_df and max_df.
+
+TF-IDF Vectorization (TfidfVectorizer): Normalizing word counts to reduce the weight of overly common terms and increase the prominence of rare, informative words.
+
+N-gram Modeling: Capturing contextual phrasing by extracting bigrams and trigrams via ngram_range.
+
+4. Model Validation & scikit-learn Workflow
+Pipeline Standard: Implementing the standard scikit-learn modeling lifecycle—instantiating estimators, fitting on training data (.fit()), generating predictions (.predict()), and evaluating performance.
+
+Train-Test Splitting: Preventing data leakage by fitting transformers (like TF-IDF or scalers) exclusively on training data and transforming unseen test sets independently.
+
+Accuracy Metrics: Assessing model error using metrics such as Mean Absolute Error (MAE).
+
+💻 Quick Reference Code Snippets
+Text Vectorization & TF-IDF (Training vs. Unstable Unseen Data)
+Python
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Instantiate vectorizer
+tv = TfidfVectorizer(max_features=100, stop_words='english', ngram_range=(1, 2))
+
+# Fit and transform ONLY on training data
+tv_transformed = tv.fit_transform(train_df['text_clean'])
+train_tv_df = pd.DataFrame(tv_transformed.toarray(), columns=tv.get_feature_names_out()).add_prefix('TFIDF_')
+
+# Transform test data using the fitted vectorizer
+test_tv_transformed = tv.transform(test_df['text_clean'])
+test_tv_df = pd.DataFrame(test_tv_transformed.toarray(), columns=tv.get_feature_names_out()).add_prefix('TFIDF_')
+Basic Model Validation & Evaluation
+Python
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error
+
+# Instantiate model
+model = RandomForestRegressor(random_state=42)
+
+# Fit model
+model.fit(X_train, y_train)
+
+# Predict and evaluate
+predictions = model.predict(X_test)
+mae = mean_absolute_error(y_test, predictions)
+print(f"Mean Absolute Error on Test Set: {mae:.4f}")
+🛠️ Requirements & Setup
+Python 3.8+
+
+Libraries: pandas, numpy, scikit-learn, scipy
