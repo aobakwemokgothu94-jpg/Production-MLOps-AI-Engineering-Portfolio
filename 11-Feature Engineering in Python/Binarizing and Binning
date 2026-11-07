@@ -1,0 +1,55 @@
+Feature Engineering in Python: Binarizing and Binning
+This repository/chapter covers fundamental feature engineering techniques using Pandas and NumPy to transform continuous and numeric data into more interpretable formats for machine learning models.
+
+🚀 Key Concepts Covered
+Binarizing Columns:
+
+Converting a numeric or continuous column into a binary indicator (
+0
+0 or 
+1
+1) when the exact magnitude doesn't matter, but the presence of a value or a specific threshold does.
+
+Binning Values (Equal-Width and Custom Bins):
+
+Grouping continuous variables (like salary or age) into categorical buckets or bins using pd.cut(). This helps simplify models and handles non-linear relationships.
+
+💻 Code Scripts
+1. Binarizing a Numeric Column
+This script creates a binary flag (Paid_Job) indicating whether survey respondents are paid based on whether their salary is greater than zero.
+
+Python
+# Create the Paid_Job column filled with zeros
+so_survey_df['Paid_Job'] = 0
+
+# Replace all the Paid_Job values where ConvertedSalary is > 0
+so_survey_df.loc[so_survey_df['ConvertedSalary'] > 0, 'Paid_Job'] = 1
+
+# Print the first five rows of the columns
+print(so_survey_df[['Paid_Job', 'ConvertedSalary']].head())
+2. Binning Continuous Data with Custom Boundaries and Labels
+This script bins continuous salary data into custom categories ('Very low', 'Low', 'Medium', 'High', 'Very high') using specified boundary thresholds.
+
+Python
+# Import numpy
+import numpy as np
+
+# Specify the boundaries of the bins
+bins = [-np.inf, 10000, 50000, 100000, 150000, np.inf]
+
+# Bin labels
+labels = ['Very low', 'Low', 'Medium', 'High', 'Very high']
+
+# Bin the continuous variable ConvertedSalary using these boundaries
+so_survey_df['boundary_binned'] = pd.cut(so_survey_df['ConvertedSalary'], 
+                                         bins=bins, 
+                                         labels=labels)
+
+# Print the first 5 rows of the boundary_binned column
+print(so_survey_df[['boundary_binned', 'ConvertedSalary']].head())
+🛠️ Requirements
+Python 3.x
+
+Pandas
+
+NumPy
