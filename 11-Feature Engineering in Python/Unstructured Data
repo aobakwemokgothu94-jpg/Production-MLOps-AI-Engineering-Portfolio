@@ -1,0 +1,61 @@
+Dealing with Unstructured Data (Text)
+
+This chapter focuses on transforming unstructured, free-form text columns into standardized, high-level numeric features that can be ingested by machine learning models.
+
+---
+
+## 🚀 Key Concepts & Workflow
+
+1. **Text Standardization & Cleaning**
+   - Unstructured text cannot be used directly in ML models.
+   - We remove non-letter characters using regular expressions (`[^a-zA-Z]`) and convert everything to lowercase to unify vocabulary.
+
+2. **High-Level Text Features**
+   - Extract fundamental metadata properties directly from the cleaned strings, such as:
+     - **Character Length:** Total length of the string.
+     - **Word Count:** Total number of words by splitting strings by whitespace.
+     - **Average Word Length:** Ratio of character count to word count.
+
+3. **Word Count Representation (Vectorization)**
+   - Converting text content into columns of token counts using scikit-learn's `CountVectorizer`.
+   - Limiting feature dimensions using thresholds:
+     - `min_df`: Ignores words that appear in fewer than a specified minimum count or percentage of texts.
+     - `max_df`: Ignores words that appear in more than a specified maximum percentage of texts (removing overly common stop words).
+   - Combining generated sparse arrays/DataFrames back into the main dataset using pandas `concat`.
+
+---
+
+## 💻 Code Reference Cheat Sheet
+
+### 1. Cleaning and Lowercasing Text
+```python
+import pandas as pd
+
+# Replace non-letter characters with whitespace and convert to lowercase
+speech_df['text_clean'] = speech_df['text'].str.replace('[^a-zA-Z]', ' ', regex=True).str.lower()
+2. Extracting High-Level Text Features
+Python
+# Calculate character count
+speech_df['char_cnt'] = speech_df['text_clean'].str.len()
+
+# Calculate word count
+speech_df['word_cnt'] = speech_df['text_clean'].str.split().str.len()
+
+# Calculate average word length
+speech_df['avg_word_length'] = speech_df['char_cnt'] / speech_df['word_cnt']
+3. Vectorizing Text with CountVectorizer
+Python
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Instantiate vectorizer with document frequency filters
+cv = CountVectorizer(min_df=0.1, max_df=0.9)
+
+# Fit and transform the text column
+cv_transformed = cv.fit_transform(speech_df['text_clean'])
+
+# Create a DataFrame from the sparse array and feature names
+cv_df = pd.DataFrame(cv_transformed.toarray(), columns=cv.get_feature_names_out())
+cv_df = cv_df.add_prefix('Counts_')
+
+# Concatenate back to the original DataFrame
+speech_df = pd.concat([speech_df, cv_df], axis=1)
