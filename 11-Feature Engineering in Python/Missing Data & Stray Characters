@@ -1,0 +1,66 @@
+Dealing with Missing Data & Stray Characters in Python
+This chapter covers essential data preprocessing techniques using pandas to clean datasets, handle missing values, deal with formatting inconsistencies (such as currency symbols and commas), and streamline operations using method chaining.
+
+1. Handling Missing Values
+Missing data is common in real-world datasets. Depending on your use case, you can either drop incomplete rows/columns or fill them with constants.
+
+Identifying Missing Values
+df.isna() / df.isnull(): Returns a boolean DataFrame showing True where values are missing and False otherwise.
+
+df.notna() / df.notnull(): Returns True for valid (non-missing) entries.
+
+Listwise Deletion (Dropping Missing Data)
+Drop all rows with any missing value:
+
+Python
+df_clean_rows = df.dropna()
+Drop all columns with any missing value:
+
+Python
+df_clean_cols = df.dropna(axis=1)
+Drop rows where a specific column is missing:
+
+Python
+df_subset = df.dropna(subset=['ColumnName'])
+Counting Categories (Including Missing Values)
+To include missing values (NaN) in value counts:
+
+Python
+counts = df['ColumnName'].value_counts(dropna=False)
+2. Dealing with Stray Characters
+Real-world numerical columns often contain currency symbols ($, £), commas (,), or other formatting characters that prevent them from being cast as numeric types.
+
+Step-by-Step Cleaning
+Identify problematic characters by attempting conversion with coercion:
+
+Python
+numeric_vals = pd.to_numeric(df['RawSalary'], errors='coerce')
+idx = numeric_vals.isna()
+print(df['RawSalary'][idx])  # Inspect rows causing issues
+Remove unwanted characters using string methods:
+
+Python
+df['RawSalary'] = df['RawSalary'].str.replace(',', '', regex=False)
+df['RawSalary'] = df['RawSalary'].str.replace('$', '', regex=False)
+df['RawSalary'] = df['RawSalary'].str.replace('£', '', regex=False)
+Cast to numeric type:
+
+Python
+df['RawSalary'] = df['RawSalary'].astype(float)
+3. Method Chaining
+Instead of writing multiple sequential assignments, you can string together multiple .str methods and type-casting operations in a clean, readable continuous block using method chaining:
+
+Python
+df['RawSalary'] = (
+    df['RawSalary']
+    .str.replace(',', '', regex=False)
+    .str.replace('$', '', regex=False)
+    .str.replace('£', '', regex=False)
+    .astype(float)
+)
+Benefits of Method Chaining:
+Readability: Keeps related transformations grouped together.
+
+Conciseness: Reduces the need for intermediate variables.
+
+Maintainability: Makes it easier to add, remove, or reorder preprocessing steps.
